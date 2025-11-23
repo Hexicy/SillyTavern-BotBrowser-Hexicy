@@ -151,50 +151,45 @@ export function validateCardImages() {
             if (urlMatch && urlMatch[1]) {
                 const imageUrl = urlMatch[1];
 
-                // Try to fetch the image to get error code
-                fetch(imageUrl, { method: 'HEAD' })
-                    .then(response => {
-                        if (!response.ok) {
-                            // Image failed to load, show fallback with error code
-                            imageDiv.style.backgroundImage = 'none';
-                            imageDiv.classList.add('image-load-failed');
+                // Use an actual Image object to test loading instead of fetch (avoids CORS issues)
+                const testImg = new Image();
 
-                            // Add fallback content if not already present
-                            if (!imageDiv.querySelector('.image-failed-text')) {
-                                imageDiv.innerHTML = `
-                                    <div class="image-failed-text">
-                                        <i class="fa-solid fa-image-slash"></i>
-                                        <span>Image Failed to Load</span>
-                                        <span class="error-code">Error ${response.status}</span>
-                                    </div>
-                                `;
-                            }
+                testImg.onerror = () => {
+                    // Image actually failed to load, try to get error code
+                    fetch(imageUrl, { method: 'HEAD' })
+                        .then(response => {
+                            const errorCode = response.ok ? 'Unknown Error' : `Error ${response.status}`;
+                            showImageError(imageDiv, errorCode, imageUrl);
+                        })
+                        .catch(() => {
+                            showImageError(imageDiv, 'Network Error', imageUrl);
+                        });
 
-                            failedCount++;
-                            console.log(`[Bot Browser] Showing fallback for card with failed image (${response.status}):`, imageUrl);
-                        }
-                    })
-                    .catch(error => {
-                        // Network error or CORS issue
-                        imageDiv.style.backgroundImage = 'none';
-                        imageDiv.classList.add('image-load-failed');
+                    failedCount++;
+                };
 
-                        if (!imageDiv.querySelector('.image-failed-text')) {
-                            imageDiv.innerHTML = `
-                                <div class="image-failed-text">
-                                    <i class="fa-solid fa-image-slash"></i>
-                                    <span>Image Failed to Load</span>
-                                    <span class="error-code">Network Error</span>
-                                </div>
-                            `;
-                        }
-
-                        failedCount++;
-                        console.log('[Bot Browser] Showing fallback for card with network error:', imageUrl, error);
-                    });
+                testImg.src = imageUrl;
             }
         }
     });
+}
+
+// Helper function to show image error
+function showImageError(imageDiv, errorCode, imageUrl) {
+    imageDiv.style.backgroundImage = 'none';
+    imageDiv.classList.add('image-load-failed');
+
+    if (!imageDiv.querySelector('.image-failed-text')) {
+        imageDiv.innerHTML = `
+            <div class="image-failed-text">
+                <i class="fa-solid fa-image-slash"></i>
+                <span>Image Failed to Load</span>
+                <span class="error-code">${errorCode}</span>
+            </div>
+        `;
+    }
+
+    console.log(`[Bot Browser] Showing fallback for card with failed image (${errorCode}):`, imageUrl);
 }
 
 export async function getRandomCard(source, currentCards, loadServiceIndexFunc) {

@@ -198,46 +198,41 @@ function validateDetailModalImage(detailModal, card) {
 
     const imageUrl = urlMatch[1];
 
-    // Try to fetch the image to check if it loads
-    fetch(imageUrl, { method: 'HEAD' })
-        .then(response => {
-            if (!response.ok) {
-                // Image failed to load, show fallback with error code
-                imageDiv.style.backgroundImage = 'none';
-                imageDiv.classList.add('image-load-failed');
-                imageDiv.classList.remove('clickable-image');
-                imageDiv.removeAttribute('data-image-url');
-                imageDiv.removeAttribute('title');
+    // Use an actual Image object to test loading instead of fetch (avoids CORS issues)
+    const testImg = new Image();
 
-                imageDiv.innerHTML = `
-                    <div class="image-failed-text">
-                        <i class="fa-solid fa-image-slash"></i>
-                        <span>Image Failed to Load</span>
-                        <span class="error-code">Error ${response.status}</span>
-                    </div>
-                `;
+    testImg.onerror = () => {
+        // Image actually failed to load, try to get error code
+        fetch(imageUrl, { method: 'HEAD' })
+            .then(response => {
+                const errorCode = response.ok ? 'Unknown Error' : `Error ${response.status}`;
+                showDetailImageError(imageDiv, errorCode, imageUrl);
+            })
+            .catch(() => {
+                showDetailImageError(imageDiv, 'Network Error', imageUrl);
+            });
+    };
 
-                console.log(`[Bot Browser] Detail modal image failed to load (${response.status}):`, imageUrl);
-            }
-        })
-        .catch(error => {
-            // Network error or CORS issue
-            imageDiv.style.backgroundImage = 'none';
-            imageDiv.classList.add('image-load-failed');
-            imageDiv.classList.remove('clickable-image');
-            imageDiv.removeAttribute('data-image-url');
-            imageDiv.removeAttribute('title');
+    testImg.src = imageUrl;
+}
 
-            imageDiv.innerHTML = `
-                <div class="image-failed-text">
-                    <i class="fa-solid fa-image-slash"></i>
-                    <span>Image Failed to Load</span>
-                    <span class="error-code">Network Error</span>
-                </div>
-            `;
+// Helper function to show detail modal image error
+function showDetailImageError(imageDiv, errorCode, imageUrl) {
+    imageDiv.style.backgroundImage = 'none';
+    imageDiv.classList.add('image-load-failed');
+    imageDiv.classList.remove('clickable-image');
+    imageDiv.removeAttribute('data-image-url');
+    imageDiv.removeAttribute('title');
 
-            console.log('[Bot Browser] Detail modal image network error:', imageUrl, error);
-        });
+    imageDiv.innerHTML = `
+        <div class="image-failed-text">
+            <i class="fa-solid fa-image-slash"></i>
+            <span>Image Failed to Load</span>
+            <span class="error-code">${errorCode}</span>
+        </div>
+    `;
+
+    console.log(`[Bot Browser] Detail modal image failed to load (${errorCode}):`, imageUrl);
 }
 
 // Close detail modal
