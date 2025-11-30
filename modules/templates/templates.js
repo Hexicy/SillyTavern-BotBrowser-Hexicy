@@ -40,7 +40,7 @@ export function createCardHTML(card) {
 export function getOriginalMenuHTML(recentlyViewed) {
     return `
         <div class="bot-browser-header">
-            <h3>Bot Browser <span style="font-size: 0.6em; font-weight: 400; color: rgba(255, 255, 255, 0.6);">v1.1.0</span></h3>
+            <h3>Bot Browser <span style="font-size: 0.6em; font-weight: 400; color: rgba(255, 255, 255, 0.6);">v1.1.1</span></h3>
             <div class="bot-browser-tabs">
                 <button class="bot-browser-tab active" data-tab="bots">Bots</button>
                 <button class="bot-browser-tab" data-tab="lorebooks">Lorebooks</button>
@@ -164,8 +164,9 @@ export function createBrowserHeader(serviceDisplayName, searchValue, cardCountTe
             </button>
         </div>
 
-        <div class="bot-browser-search-section${searchCollapsed ? ' collapsed' : ''}" id="bot-browser-search-section">
-            <input type="text"
+        <div class="bot-browser-card-grid-wrapper">
+            <div class="bot-browser-search-section${searchCollapsed ? ' collapsed' : ''}" id="bot-browser-search-section">
+                <input type="text"
                    class="bot-browser-search-input"
                    placeholder="Search by name, description, creator, or tags (typo-tolerant)..."
                    value="${escapeHTML(searchValue)}">
@@ -365,9 +366,8 @@ export function createBrowserHeader(serviceDisplayName, searchValue, cardCountTe
                 </div>
             </div>
             ` : ''}
-        </div>
+            </div>
 
-        <div class="bot-browser-card-grid-wrapper">
             <div class="bot-browser-card-grid">
             </div>
         </div>
@@ -420,37 +420,37 @@ export function createCollectionsBrowserHeader(sortBy = 'popular', cardCountText
             </button>
         </div>
 
-        <div class="bot-browser-search-section${searchCollapsed ? ' collapsed' : ''}" id="bot-browser-search-section">
-            <div class="bot-browser-filters">
-                <div class="bot-browser-filter-group">
-                    <label>Sort by:</label>
-                    <div class="bot-browser-multi-select bot-browser-sort-dropdown" id="bot-browser-collections-sort">
-                        <div class="bot-browser-multi-select-trigger">
-                            <span class="selected-text">${sortBy === 'popular' ? 'Most Popular' : 'Latest'}</span>
-                            <i class="fa-solid fa-chevron-down"></i>
-                        </div>
-                        <div class="bot-browser-multi-select-dropdown">
-                            <div class="bot-browser-multi-select-options">
-                                <div class="bot-browser-multi-select-option ${sortBy === 'popular' ? 'selected' : ''}" data-value="popular">
-                                    <i class="fa-solid fa-check"></i>
-                                    <span>Most Popular</span>
-                                </div>
-                                <div class="bot-browser-multi-select-option ${sortBy === 'new' ? 'selected' : ''}" data-value="new">
-                                    <i class="fa-solid fa-check"></i>
-                                    <span>Latest</span>
+        <div class="bot-browser-card-grid-wrapper">
+            <div class="bot-browser-search-section${searchCollapsed ? ' collapsed' : ''}" id="bot-browser-search-section">
+                <div class="bot-browser-filters">
+                    <div class="bot-browser-filter-group">
+                        <label>Sort by:</label>
+                        <div class="bot-browser-multi-select bot-browser-sort-dropdown" id="bot-browser-collections-sort">
+                            <div class="bot-browser-multi-select-trigger">
+                                <span class="selected-text">${sortBy === 'popular' ? 'Most Popular' : 'Latest'}</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </div>
+                            <div class="bot-browser-multi-select-dropdown">
+                                <div class="bot-browser-multi-select-options">
+                                    <div class="bot-browser-multi-select-option ${sortBy === 'popular' ? 'selected' : ''}" data-value="popular">
+                                        <i class="fa-solid fa-check"></i>
+                                        <span>Most Popular</span>
+                                    </div>
+                                    <div class="bot-browser-multi-select-option ${sortBy === 'new' ? 'selected' : ''}" data-value="new">
+                                        <i class="fa-solid fa-check"></i>
+                                        <span>Latest</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="bot-browser-results-count">
+                    ${cardCountText}
+                </div>
             </div>
 
-            <div class="bot-browser-results-count">
-                ${cardCountText}
-            </div>
-        </div>
-
-        <div class="bot-browser-card-grid-wrapper">
             <div class="bot-browser-card-grid bot-browser-collections-grid">
             </div>
         </div>

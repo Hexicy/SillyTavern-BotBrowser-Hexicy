@@ -577,28 +577,9 @@ body .bot-browser-detail-modal {
     font-size: 1em;
 }
 
+/* Hide toggle button - search section always visible and scrolls with content */
 .bot-browser-toggle-search {
-    background: rgba(100, 150, 255, 0.15);
-    border: 1px solid rgba(100, 150, 255, 0.3);
-    color: rgba(255, 255, 255, 0.8);
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.bot-browser-toggle-search:hover {
-    background: rgba(100, 150, 255, 0.25);
-    border-color: rgba(100, 150, 255, 0.5);
-    color: rgba(255, 255, 255, 1);
-}
-
-.bot-browser-toggle-search i {
-    transition: transform 0.3s ease;
+    display: none !important;
 }
 
 /* Search Section */
@@ -616,13 +597,14 @@ body .bot-browser-detail-modal {
     opacity: 1;
 }
 
+/* Override collapsed state - search section always visible */
 .bot-browser-search-section.collapsed {
-    max-height: 0;
-    opacity: 0;
-    margin-bottom: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    overflow: hidden;
+    max-height: 5000px !important;
+    opacity: 1 !important;
+    margin-bottom: 15px !important;
+    padding-top: 15px !important;
+    padding-bottom: 15px !important;
+    overflow: visible !important;
 }
 
 .bot-browser-search-input {
@@ -829,6 +811,13 @@ body .bot-browser-detail-modal {
     z-index: 1;
 }
 
+/* Remove sticky search on mobile - scroll with content */
+@media (max-width: 768px) {
+    .bot-browser-multi-select-search {
+        position: static;
+    }
+}
+
 .bot-browser-multi-select-search input {
     width: 100%;
     padding: 6px 10px;
@@ -865,13 +854,14 @@ body .bot-browser-detail-modal {
     font-size: 0.9em;
 }
 
-/* Card Grid Wrapper */
+/* Card Grid Wrapper - scrolls both search section and cards */
 .bot-browser-card-grid-wrapper {
     flex: 1;
-    overflow: hidden;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     min-height: 0;
+    padding: 5px;
 }
 
 /* Card Grid */
@@ -880,10 +870,8 @@ body .bot-browser-detail-modal {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     grid-auto-rows: max-content;
     gap: 12px;
-    overflow-y: auto;
-    padding: 5px;
+    padding: 5px 0;
     align-content: start;
-    height: 100%;
 }
 
 @media (min-width: 768px) {
