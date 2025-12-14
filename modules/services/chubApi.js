@@ -134,6 +134,8 @@ export function transformFullChubCharacter(charData) {
         system_prompt: definition.system_prompt || node.system_prompt || node.systemPrompt || '',
         post_history_instructions: definition.post_history_instructions || node.post_history_instructions || '',
         alternate_greetings: definition.alternate_greetings || node.alternate_greetings || node.alternateGreetings || [],
+        // Include embedded lorebook if present
+        character_book: definition.embedded_lorebook || node.embedded_lorebook || undefined,
         tags: node.topics || [],
         creator: node.fullPath?.split('/')[0] || 'Unknown',
         character_version: node.version || '1.0',

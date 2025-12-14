@@ -161,6 +161,12 @@ async function importCharacter(card, extensionName, extension_settings, importSt
             if (fullData && fullData.node) {
                 const fullCharData = transformFullChubCharacter(fullData);
                 card = { ...card, ...fullCharData };
+
+                // If we have character_book from API, use dedicated import to ensure lorebook is embedded
+                if (fullCharData.character_book) {
+                    console.log('[Bot Browser] Card has embedded lorebook, using API-based import');
+                    return await importLiveChubCard(card, extensionName, extension_settings, importStats, processDroppedFiles);
+                }
             }
         } catch (error) {
             console.warn('[Bot Browser] Failed to fetch full Chub data, using preview data:', error.message);
@@ -339,12 +345,13 @@ async function importFromChunkData(card, extensionName, extension_settings, impo
             first_mes: fullCard.first_message || '',
             mes_example: fullCard.example_messages || fullCard.mes_example || '',
             creator_notes: fullCard.website_description || '',
-            system_prompt: '',
-            post_history_instructions: '',
+            system_prompt: fullCard.system_prompt || '',
+            post_history_instructions: fullCard.post_history_instructions || '',
             creator: fullCard.creator || '',
-            character_version: '',
+            character_version: fullCard.character_version || '',
             tags: fullCard.tags || [],
             alternate_greetings: fullCard.alternate_greetings || [],
+            character_book: fullCard.character_book || undefined,
             extensions: {
                 talkativeness: '0.5',
                 fav: false,
@@ -690,6 +697,89 @@ async function importWyvernCard(card, extensionName, extension_settings, importS
 
     toastr.success(`${card.name} imported successfully!`, '', { timeOut: 2000 });
     console.log('[Bot Browser] Wyvern card imported successfully');
+
+    // Track import
+    return trackImport(extensionName, extension_settings, importStats, card, 'character');
+}
+
+// Import live Chub card with embedded lorebook - creates PNG with embedded character data
+async function importLiveChubCard(card, extensionName, extension_settings, importStats, processDroppedFiles) {
+    console.log('[Bot Browser] Importing live Chub card with embedded data');
+
+    // Convert to Character Card V2 format
+    const characterData = {
+        spec: 'chara_card_v2',
+        spec_version: '2.0',
+        data: {
+            name: card.name || '',
+            description: card.description || '',
+            personality: card.personality || '',
+            scenario: card.scenario || '',
+            first_mes: card.first_message || '',
+            mes_example: card.mes_example || '',
+            creator_notes: card.creator_notes || card.website_description || '',
+            system_prompt: card.system_prompt || '',
+            post_history_instructions: card.post_history_instructions || '',
+            creator: card.creator || '',
+            character_version: card.character_version || '1.0',
+            tags: card.tags || [],
+            alternate_greetings: card.alternate_greetings || [],
+            character_book: card.character_book || undefined,
+            extensions: {
+                talkativeness: '0.5',
+                fav: false,
+                world: '',
+                depth_prompt: {
+                    prompt: '',
+                    depth: 4
+                },
+                chub: card.extensions?.chub || {}
+            }
+        }
+    };
+
+    console.log('[Bot Browser] Live Chub V2 card data:', characterData);
+    if (characterData.data.character_book) {
+        console.log('[Bot Browser] Character book entries:', characterData.data.character_book.entries?.length || 0);
+    }
+
+    // Get the avatar image
+    let imageBlob;
+    const imageUrl = card.avatar_url || card.image_url;
+
+    if (imageUrl) {
+        try {
+            const imageResponse = await fetch(imageUrl);
+            if (imageResponse.ok) {
+                imageBlob = await imageResponse.blob();
+                console.log('[Bot Browser] ✓ Fetched Chub avatar image');
+            }
+        } catch (error) {
+            console.warn('[Bot Browser] Failed to fetch Chub avatar:', error);
+        }
+    }
+
+    // If no image available, use default avatar
+    if (!imageBlob) {
+        console.log('[Bot Browser] Using default avatar for Chub card');
+        const defaultAvatarResponse = await fetch(default_avatar);
+        imageBlob = await defaultAvatarResponse.blob();
+    }
+
+    // Encode character data as base64 to embed in PNG
+    const jsonString = JSON.stringify(characterData);
+    const base64Data = btoa(unescape(encodeURIComponent(jsonString)));
+
+    // Create PNG with embedded character data
+    const pngBlob = await createCharacterPNG(imageBlob, base64Data);
+    const fileName = card.name.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '.png';
+    const file = new File([pngBlob], fileName, { type: 'image/png' });
+
+    // Import the character
+    await processDroppedFiles([file]);
+
+    toastr.success(`${card.name} imported successfully!`, '', { timeOut: 2000 });
+    console.log('[Bot Browser] Live Chub card imported successfully with embedded lorebook');
 
     // Track import
     return trackImport(extensionName, extension_settings, importStats, card, 'character');
