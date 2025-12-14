@@ -123,6 +123,10 @@ export function transformFullChubCharacter(charData) {
     // Gateway API stores full character data in node.definition
     // NOTE: Chub's "description" field is changelog/notes, NOT the character description
     // The actual character description (what SillyTavern shows) is in "personality"
+
+    // Get related lorebooks (first valid one, excluding -1)
+    const relatedLorebooks = (node.related_lorebooks || []).filter(id => id > 0);
+
     return {
         name: node.name || definition.name || 'Unnamed',
         description: definition.personality || node.personality || '',
@@ -136,6 +140,8 @@ export function transformFullChubCharacter(charData) {
         alternate_greetings: definition.alternate_greetings || node.alternate_greetings || node.alternateGreetings || [],
         // Include embedded lorebook if present
         character_book: definition.embedded_lorebook || node.embedded_lorebook || undefined,
+        // Include related lorebook IDs for fetching if no embedded lorebook
+        related_lorebooks: relatedLorebooks.length > 0 ? relatedLorebooks : undefined,
         tags: node.topics || [],
         creator: node.fullPath?.split('/')[0] || 'Unknown',
         character_version: node.version || '1.0',
@@ -149,6 +155,44 @@ export function transformFullChubCharacter(charData) {
                 id: node.id
             }
         }
+    };
+}
+
+/**
+ * Convert SillyTavern World Info format to character_book format
+ * @param {Object} worldInfo - World info data with entries as object
+ * @param {string} name - Name for the character book
+ * @returns {Object} Character book with entries as array
+ */
+export function convertWorldInfoToCharacterBook(worldInfo, name) {
+    const entries = [];
+
+    // Convert entries object to array
+    if (worldInfo.entries && typeof worldInfo.entries === 'object') {
+        for (const [key, entry] of Object.entries(worldInfo.entries)) {
+            entries.push({
+                id: entry.uid || parseInt(key) || entries.length,
+                keys: entry.key || [],
+                secondary_keys: entry.keysecondary || [],
+                comment: entry.comment || entry.name || '',
+                content: entry.content || '',
+                constant: entry.constant || false,
+                selective: entry.selective !== false,
+                insertion_order: entry.order || entry.insertion_order || 100,
+                enabled: entry.enabled !== false,
+                position: entry.position || 'before_char',
+                extensions: entry.extensions || {},
+                priority: entry.priority || 10,
+                name: entry.name || '',
+                probability: entry.probability || 100,
+                case_sensitive: entry.case_sensitive || false,
+            });
+        }
+    }
+
+    return {
+        name: name || 'Imported Lorebook',
+        entries: entries
     };
 }
 

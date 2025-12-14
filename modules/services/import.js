@@ -153,7 +153,7 @@ async function importCharacter(card, extensionName, extension_settings, importSt
     if (card.isLiveChub && card.fullPath) {
         console.log('[Bot Browser] Importing live Chub card:', card.fullPath);
         try {
-            const { getChubCharacter, transformFullChubCharacter } = await import('./chubApi.js');
+            const { getChubCharacter, transformFullChubCharacter, getChubLorebook, convertWorldInfoToCharacterBook } = await import('./chubApi.js');
             const fullData = await getChubCharacter(card.fullPath);
             console.log('[Bot Browser] Fetched full Chub character data');
 
@@ -166,6 +166,24 @@ async function importCharacter(card, extensionName, extension_settings, importSt
                 if (fullCharData.character_book) {
                     console.log('[Bot Browser] Card has embedded lorebook, using API-based import');
                     return await importLiveChubCard(card, extensionName, extension_settings, importStats, processDroppedFiles);
+                }
+
+                // If no embedded lorebook but has related lorebooks, fetch the first one
+                if (!fullCharData.character_book && fullCharData.related_lorebooks && fullCharData.related_lorebooks.length > 0) {
+                    const firstLorebookId = fullCharData.related_lorebooks[0];
+                    console.log('[Bot Browser] Card has related lorebook, fetching ID:', firstLorebookId);
+                    try {
+                        const lorebookData = await getChubLorebook(firstLorebookId);
+                        if (lorebookData) {
+                            // Convert World Info format to character_book format
+                            const lorebookName = fullData.nodes?.[firstLorebookId]?.name || 'Linked Lorebook';
+                            card.character_book = convertWorldInfoToCharacterBook(lorebookData, lorebookName);
+                            console.log('[Bot Browser] Fetched related lorebook:', lorebookName, 'with', card.character_book.entries?.length || 0, 'entries');
+                            return await importLiveChubCard(card, extensionName, extension_settings, importStats, processDroppedFiles);
+                        }
+                    } catch (lorebookError) {
+                        console.warn('[Bot Browser] Failed to fetch related lorebook:', lorebookError.message);
+                    }
                 }
             }
         } catch (error) {
