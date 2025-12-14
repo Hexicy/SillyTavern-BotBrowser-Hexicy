@@ -104,12 +104,10 @@ export let chubTrendingState = {
 };
 
 export function resetChubTrendingState() {
-    chubTrendingState = {
-        page: 1,
-        hasMore: true,
-        isLoading: false,
-        totalHits: 0
-    };
+    chubTrendingState.page = 1;
+    chubTrendingState.hasMore = true;
+    chubTrendingState.isLoading = false;
+    chubTrendingState.totalHits = 0;
 }
 
 /**
@@ -225,13 +223,11 @@ export let wyvernTrendingState = {
 };
 
 export function resetWyvernTrendingState() {
-    wyvernTrendingState = {
-        page: 1,
-        hasMore: true,
-        isLoading: false,
-        totalHits: 0,
-        lastSort: 'nsfw-popular'
-    };
+    wyvernTrendingState.page = 1;
+    wyvernTrendingState.hasMore = true;
+    wyvernTrendingState.isLoading = false;
+    wyvernTrendingState.totalHits = 0;
+    wyvernTrendingState.lastSort = 'nsfw-popular';
 }
 
 /**
@@ -352,12 +348,10 @@ export let jannyTrendingState = {
 };
 
 export function resetJannyTrendingState() {
-    jannyTrendingState = {
-        page: 1,
-        hasMore: true,
-        isLoading: false,
-        totalHits: 0
-    };
+    jannyTrendingState.page = 1;
+    jannyTrendingState.hasMore = true;
+    jannyTrendingState.isLoading = false;
+    jannyTrendingState.totalHits = 0;
 }
 
 /**
