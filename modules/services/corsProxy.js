@@ -44,30 +44,30 @@ const PROXY_CONFIGS = {
  * Puter.js is free and works well for most services
  */
 const SERVICE_PROXY_MAP = {
-    // JannyAI - Puter first, then corsproxy.io, then cors.lol
-    jannyai: [PROXY_TYPES.PUTER, PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.CORS_LOL],
-    jannyai_trending: [PROXY_TYPES.PUTER, PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.CORS_LOL],
+    // JannyAI - corsproxy.io first, then Puter, then cors.lol
+    jannyai: [PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.PUTER, PROXY_TYPES.CORS_LOL],
+    jannyai_trending: [PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.PUTER, PROXY_TYPES.CORS_LOL],
 
-    // Character Tavern - Puter first, then corsproxy.io, then cors.lol
-    character_tavern: [PROXY_TYPES.PUTER, PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.CORS_LOL],
-    character_tavern_trending: [PROXY_TYPES.PUTER, PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.CORS_LOL],
+    // Character Tavern - corsproxy.io first, then Puter, then cors.lol
+    character_tavern: [PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.PUTER, PROXY_TYPES.CORS_LOL],
+    character_tavern_trending: [PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.PUTER, PROXY_TYPES.CORS_LOL],
 
-    // Wyvern - Puter first, then corsproxy.io, then cors.lol
-    wyvern: [PROXY_TYPES.PUTER, PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.CORS_LOL],
-    wyvern_trending: [PROXY_TYPES.PUTER, PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.CORS_LOL],
+    // Wyvern - corsproxy.io first, then Puter, then cors.lol
+    wyvern: [PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.PUTER, PROXY_TYPES.CORS_LOL],
+    wyvern_trending: [PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.PUTER, PROXY_TYPES.CORS_LOL],
 
     // Chub - direct works (no CORS issues)
     chub: [PROXY_TYPES.NONE],
     chub_trending: [PROXY_TYPES.NONE],
 
-    // RisuRealm - Puter first, then corsproxy.io, then cors.lol
-    risuai_realm: [PROXY_TYPES.PUTER, PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.CORS_LOL],
-    risuai_realm_trending: [PROXY_TYPES.PUTER, PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.CORS_LOL],
+    // RisuRealm - corsproxy.io first, then Puter, then cors.lol
+    risuai_realm: [PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.PUTER, PROXY_TYPES.CORS_LOL],
+    risuai_realm_trending: [PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.PUTER, PROXY_TYPES.CORS_LOL],
 
-    // MLPChag - direct first (neocities has CORS), then Puter, then cors.lol
-    mlpchag: [PROXY_TYPES.NONE, PROXY_TYPES.PUTER, PROXY_TYPES.CORS_LOL],
+    // MLPChag - direct first (neocities has CORS), then corsproxy.io, then cors.lol
+    mlpchag: [PROXY_TYPES.NONE, PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.CORS_LOL],
 
-    // Backyard.ai - corsproxy.io first (Puter has JSON parsing issues), then cors.lol, then Puter
+    // Backyard.ai - corsproxy.io first, then cors.lol, then Puter
     backyard: [PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.CORS_LOL, PROXY_TYPES.PUTER],
     backyard_trending: [PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.CORS_LOL, PROXY_TYPES.PUTER],
 
@@ -76,7 +76,7 @@ const SERVICE_PROXY_MAP = {
     pygmalion_trending: [PROXY_TYPES.NONE, PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.CORS_LOL],
 
     // Default fallback chain
-    default: [PROXY_TYPES.PUTER, PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.CORS_LOL]
+    default: [PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.PUTER, PROXY_TYPES.CORS_LOL]
 };
 
 const PUTER_CDN_URL = 'https://js.puter.com/v2/';
