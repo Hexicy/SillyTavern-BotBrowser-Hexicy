@@ -44,9 +44,9 @@ const PROXY_CONFIGS = {
  * Puter.js is free and works well for most services
  */
 const SERVICE_PROXY_MAP = {
-    // JannyAI - corsproxy.io first, then Puter, then cors.lol
-    jannyai: [PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.PUTER, PROXY_TYPES.CORS_LOL],
-    jannyai_trending: [PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.PUTER, PROXY_TYPES.CORS_LOL],
+    // JannyAI - Puter first, then corsproxy.io, then cors.lol
+    jannyai: [PROXY_TYPES.PUTER, PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.CORS_LOL],
+    jannyai_trending: [PROXY_TYPES.PUTER, PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.CORS_LOL],
 
     // Character Tavern - corsproxy.io first, then Puter, then cors.lol
     character_tavern: [PROXY_TYPES.CORSPROXY_IO, PROXY_TYPES.PUTER, PROXY_TYPES.CORS_LOL],
