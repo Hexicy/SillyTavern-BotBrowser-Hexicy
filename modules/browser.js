@@ -1481,9 +1481,30 @@ function setupCustomDropdown(container, state, filterType, extensionName, extens
         }
     };
 
+    // Track touch to distinguish scroll from tap
+    let triggerTouchStartY = 0;
+    let triggerIsTouchScrolling = false;
+
+    trigger.addEventListener('touchstart', (e) => {
+        triggerTouchStartY = e.touches[0].clientY;
+        triggerIsTouchScrolling = false;
+    }, { passive: true });
+
+    trigger.addEventListener('touchmove', (e) => {
+        const touchMoveY = e.touches[0].clientY;
+        // If moved more than 10px, it's a scroll
+        if (Math.abs(touchMoveY - triggerTouchStartY) > 10) {
+            triggerIsTouchScrolling = true;
+        }
+    }, { passive: true });
+
     // Add both click and touch handlers for mobile compatibility
     trigger.addEventListener('click', toggleDropdown);
-    trigger.addEventListener('touchend', toggleDropdown, { passive: false });
+    trigger.addEventListener('touchend', (e) => {
+        if (!triggerIsTouchScrolling) {
+            toggleDropdown(e);
+        }
+    }, { passive: false });
 
     // Search functionality (only for dropdowns with search)
     if (hasSearch && searchInput) {

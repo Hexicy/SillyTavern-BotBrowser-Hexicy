@@ -1287,6 +1287,35 @@ body .bot-browser-detail-modal {
     cursor: not-allowed;
 }
 
+/* Bulk action bar mobile responsive */
+@media (max-width: 600px) {
+    .bot-browser-bulk-action-bar {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px 12px;
+        width: calc(100% - 16px);
+    }
+
+    .bot-browser-bulk-selection-info {
+        font-size: 0.85em;
+    }
+
+    .bot-browser-bulk-actions {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .bot-browser-bulk-actions button {
+        padding: 8px 12px;
+        font-size: 0.8em;
+        flex: 1;
+        min-width: 0;
+        justify-content: center;
+    }
+}
+
 .bot-browser-own-badge {
     position: absolute;
     top: 8px;
