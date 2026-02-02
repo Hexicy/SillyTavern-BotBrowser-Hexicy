@@ -163,7 +163,7 @@ function buildCollapsibleSection(id, title, content) {
                     </button>
                     <div class="bot-browser-collapse-content" id="${id}" style="display: none;">
                         <div class="bot-browser-detail-text">
-                            ${content}
+                            ${window.renderMarkdown(content || '')}
                         </div>
                     </div>
                 </div>`;
@@ -174,7 +174,7 @@ function buildSection(title, content) {
                 <div class="bot-browser-detail-section">
                     <h4>${title}</h4>
                     <div class="bot-browser-detail-text">
-                        ${content}
+                        ${window.renderMarkdown(content || '')}
                     </div>
                 </div>`;
 }
@@ -189,7 +189,7 @@ function buildAlternateGreetingsSection(alternateGreetings) {
                                 <i class="fa-solid fa-comment"></i> Greeting ${index + 1}
                             </div>
                             <div class="bot-browser-detail-text">
-                                ${greeting}
+                                ${window.renderMarkdown(greeting || '')}
                             </div>
                         </div>
                     `).join('')}
@@ -210,7 +210,7 @@ function buildLorebookEntriesSection(entries, entriesCount) {
                                 </div>
                             ` : ''}
                             <div class="bot-browser-detail-text">
-                                ${entry.content}
+                                ${window.renderMarkdown(entry.content || '')}
                             </div>
                         </div>
                     `).join('')}
