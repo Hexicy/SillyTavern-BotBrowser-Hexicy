@@ -71,15 +71,27 @@ export async function showCardDetail(card, extensionName, extension_settings, st
         const { detailOverlay, detailModal } = createDetailModal(fullCard, isRandom);
         // Render Markdown and CSS for all detail text blocks
     detailModal.querySelectorAll('.bot-browser-detail-text').forEach(el => {
-        const rawContent = el.textContent || '';
+        const rawContent = el.getAttribute('data-raw') || el.innerHTML || '';
         // Use SillyTavern's internal markdown renderer
-        if (typeof window.renderMarkdown === 'function') {
+        if (typeof window.renderMarkdown === 'function' && rawContent.length > 0) {
             el.innerHTML = window.renderMarkdown(rawContent);
         } else if (window.DOMPurify) {
             // Fallback to basic sanitization if renderMarkdown isn't globally exposed
-            el.innerHTML = window.DOMPurify.sanitize(rawContent);
+            eel.innerHTML = window.renderMarkdown(rawContent);
         }
     });
+
+        const style = document.createElement('style');
+    style.textContent = `
+        .bot-browser-detail-greeting { 
+            border-bottom: 1px solid rgba(255,255,255,0.2) !important; 
+            margin-bottom: 15px !important; 
+            padding-bottom: 15px !important; 
+            display: block !important;
+        }
+        .bot-browser-detail-greeting:last-child { border-bottom: none !important; }
+    `;
+    detailModal.appendChild(style);
 
         document.body.appendChild(detailOverlay);
         document.body.appendChild(detailModal);
