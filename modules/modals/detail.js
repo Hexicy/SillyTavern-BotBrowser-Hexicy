@@ -68,14 +68,25 @@ export async function showCardDetail(card, extensionName, extension_settings, st
             state.recentlyViewed = addToRecentlyViewed(extensionName, extension_settings, state.recentlyViewed, fullCard);
         }
 
-        const { detailOverlay, detailModal } = createDetailModal(fullCard, isRandom);
-        
-    detailModal.querySelectorAll('.bot-browser-detail-text').forEach(el => {
-        const content = el.innerHTML.trim();
-        if (typeof window.renderMarkdown === 'function' && rawContent.length > 0) {
-            el.innerHTML = window.renderMarkdown(Content);
-        }
-    });
+        detailModal.querySelectorAll('.bot-browser-detail-text').forEach(el => {
+            let rawContent = el.innerHTML.trim();
+
+            if (rawContent.includes('<style') || rawContent.includes('<div')) {
+                if (typeof window.renderMarkdown === 'function') {
+                    el.innerHTML = window.renderMarkdown(rawContent);
+                }
+            } 
+
+            else {
+                const decoder = document.createElement('textarea');
+                decoder.innerHTML = rawContent;
+                const decodedText = decoder.value;
+
+                if (typeof window.renderMarkdown === 'function' && decodedText.length > 0) {
+                    el.innerHTML = window.renderMarkdown(decodedText);
+                }
+            }
+        });
 
         const style = document.createElement('style');
     style.textContent = '.bot-browser-detail-greeting { border-bottom: 1px solid rgba(255,255,255,0.2) !important; margin-bottom: 15px !important; padding-bottom: 15px !important; display: block !important; } .bot-browser-detail-greeting:last-child { border-bottom: none !important; }';
