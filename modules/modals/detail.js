@@ -68,33 +68,22 @@ export async function showCardDetail(card, extensionName, extension_settings, st
             state.recentlyViewed = addToRecentlyViewed(extensionName, extension_settings, state.recentlyViewed, fullCard);
         }
 
-        detailModal.querySelectorAll('.bot-browser-detail-text').forEach(el => {
-        try {
-            const rawContent = el.innerHTML.trim();
-            if (!rawContent || typeof window.renderMarkdown !== 'function') return;
-
-            // If it contains CSS/HTML, render it as is.
-            // If it's plain text, we decode the entities so * and ! work.
-            let processingContent = rawContent;
-            if (!rawContent.includes('<')) {
-                const decoder = document.createElement('textarea');
-                decoder.innerHTML = rawContent;
-                processingContent = decoder.value;
-            }
-
-            el.innerHTML = window.renderMarkdown(processingContent);
-        } catch (err) {
-            console.error("Error rendering box:", err);
+        const { detailOverlay, detailModal } = createDetailModal(fullCard, isRandom);
+        
+    detailModal.querySelectorAll('.bot-browser-detail-text').forEach(el => {
+        const rawContent = el.textContent || '';
+        
+        if (typeof window.renderMarkdown === 'function') {
+            el.innerHTML = window.renderMarkdown(rawContent);
+        } else if (window.DOMPurify) {
+            
+            el.innerHTML = window.DOMPurify.sanitize(rawContent);
         }
     });
-
-    // Separation Style
-    const style = document.createElement('style');
-    style.textContent = '.bot-browser-detail-greeting { border-bottom: 1px solid rgba(255,255,255,0.2) !important; margin-bottom: 15px !important; padding-bottom: 15px !important; display: block !important; } .bot-browser-detail-greeting:last-child { border-bottom: none !important; }';
-    detailModal.appendChild(style);
         
         document.body.appendChild(detailOverlay);
         document.body.appendChild(detailModal);
+        
         setupDetailModalEvents(detailModal, detailOverlay, fullCard, state);
 
         isOpeningModal = false;
