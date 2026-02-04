@@ -69,21 +69,21 @@ export async function showCardDetail(card, extensionName, extension_settings, st
         }
 
         const { detailOverlay, detailModal } = createDetailModal(fullCard, isRandom);
-        // Render Markdown and CSS for all detail text blocks
+        
     detailModal.querySelectorAll('.bot-browser-detail-text').forEach(el => {
         const rawContent = el.textContent || '';
-        // Use SillyTavern's internal markdown renderer
+        
         if (typeof window.renderMarkdown === 'function') {
             el.innerHTML = window.renderMarkdown(rawContent);
         } else if (window.DOMPurify) {
-            // Fallback to basic sanitization if renderMarkdown isn't globally exposed
+            
             el.innerHTML = window.DOMPurify.sanitize(rawContent);
         }
     });
-
+        
         document.body.appendChild(detailOverlay);
         document.body.appendChild(detailModal);
-
+        
         setupDetailModalEvents(detailModal, detailOverlay, fullCard, state);
 
         isOpeningModal = false;
